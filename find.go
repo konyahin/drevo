@@ -21,9 +21,9 @@ func find(args []string) ([]string, error) {
 		switch {
 		case path == ".":
 			return nil
-		case d.IsDir() && strings.Contains(path, "/."):
+		case d.IsDir() && (strings.Contains(path, "/.") || strings.HasPrefix(path, ".")):
 			return fs.SkipDir
-		case d.IsDir() || strings.Contains(path, "/."):
+		case d.IsDir() || strings.Contains(path, "/.") || strings.HasPrefix(path, "."):
 			return nil
 		}
 

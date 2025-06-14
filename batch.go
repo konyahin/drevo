@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -43,7 +44,9 @@ func batch(root string) error {
 
 	tasks := strings.Split(string(content), "\n")
 	for i, task := range tasks {
-		tasks[i] = root + task
+		if task != "" {
+			tasks[i] = filepath.Join(root, task)
+		}
 	}
 
 	return create(tasks)

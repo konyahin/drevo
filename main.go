@@ -49,6 +49,12 @@ func main() {
 		if err == nil {
 			printTasks(tasks)
 		}
+	case "batch":
+		var root string
+		if len(os.Args) > 2 {
+			root = os.Args[2]
+		}
+		err = batch(root)
 	default:
 		fmt.Println("unknown subcommand -", os.Args[1])
 	}

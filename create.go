@@ -22,6 +22,10 @@ func create(args []string) error {
 	}
 
 	for _, arg := range args {
+		if arg == "" {
+			continue
+		}
+
 		state, err := taskState(arg)
 		if err != nil {
 			return err
