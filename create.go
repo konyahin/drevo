@@ -33,7 +33,7 @@ func create(args []string) error {
 		}
 
 		if state != DoesntExist {
-			return errors.New(arg + " already exist")
+			return errors.New("task already exist: " + arg)
 		}
 
 		totree(slices.Collect(pathIter(filepath.Dir(arg))))

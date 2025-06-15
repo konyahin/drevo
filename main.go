@@ -55,6 +55,12 @@ func main() {
 			root = os.Args[2]
 		}
 		err = batch(root)
+	case "complete":
+		var root string
+		if len(os.Args) > 2 {
+			root = os.Args[2]
+		}
+		err = complete(root)
 	default:
 		fmt.Println("unknown subcommand -", os.Args[1])
 	}
