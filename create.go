@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 )
 
 func init() {
@@ -35,13 +36,7 @@ func create(args []string) error {
 			return errors.New(arg + " already exist")
 		}
 
-		dirPath := filepath.Dir(arg)
-		if dirPath != "." {
-			err = os.MkdirAll(dirPath, 0750)
-			if err != nil {
-				return err
-			}
-		}
+		totree(slices.Collect(pathIter(filepath.Dir(arg))))
 
 		f, err := os.Create(arg)
 		if err != nil {

@@ -1,7 +1,12 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
+	"iter"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 type TaskState int
@@ -13,9 +18,24 @@ const (
 )
 
 func taskState(path string) (TaskState, error) {
+	for part := range pathIter(filepath.Dir(path)) {
+		state, err := fileState(part)
+		if err != nil {
+			return 0, err
+		}
+
+		if state != Tree {
+			return DoesntExist, err
+		}
+	}
+
+	return fileState(path)
+}
+
+func fileState(path string) (TaskState, error) {
 	fileInfo, err := os.Stat(path)
 	switch {
-	case os.IsNotExist(err):
+	case errors.Is(err, fs.ErrNotExist):
 		return DoesntExist, nil
 	case err != nil:
 		return 0, err
@@ -23,5 +43,18 @@ func taskState(path string) (TaskState, error) {
 		return Tree, nil
 	default:
 		return Leaf, nil
+	}
+}
+
+func pathIter(path string) iter.Seq[string] {
+	return func(yield func(string) bool) {
+		parts := strings.Split(path, string(filepath.Separator))
+		partPath := ""
+		for _, part := range parts {
+			partPath = filepath.Join(partPath, part)
+			if !yield(partPath) {
+				return
+			}
+		}
 	}
 }
