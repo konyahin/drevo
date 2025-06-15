@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"time"
 )
 
 func init() {
@@ -38,7 +39,11 @@ func create(args []string) error {
 
 		totree(slices.Collect(pathIter(filepath.Dir(arg))))
 
-		f, err := os.Create(arg)
+		dir, file := filepath.Split(arg)
+		day := time.Now().Format(time.DateOnly)
+		file = fmt.Sprintf("%s %s", day, file)
+
+		f, err := os.Create(filepath.Join(dir, file))
 		if err != nil {
 			return err
 		}
