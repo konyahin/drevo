@@ -6,20 +6,19 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 func init() {
-	helps = append(helps, completeHelp)
+	helps = append(helps, uncompleteHelp)
 }
 
-func completeHelp() {
-	fmt.Println("complete file - mark task as completed")
+func uncompleteHelp() {
+	fmt.Println("uncomplete file - mark task as uncompleted")
 }
 
-func complete(arg string) error {
+func uncomplete(arg string) error {
 	if arg == "" {
-		completeHelp()
+		uncompleteHelp()
 		return nil
 	}
 
@@ -33,11 +32,15 @@ func complete(arg string) error {
 	}
 
 	dir, file := filepath.Split(arg)
-	if strings.HasPrefix(file, "x ") {
+	if !strings.HasPrefix(file, "x ") {
 		return nil
 	}
 
-	day := time.Now().Format(time.DateOnly)
-	file = fmt.Sprintf("x %s %s", day, file)
+	file = file[2:]
+	parts := strings.SplitN(file, " ", 2)
+
+	if isDate(parts[0]) {
+		file = parts[1]
+	}
 	return os.Rename(arg, filepath.Join(dir, file))
 }

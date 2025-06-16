@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type TaskState int
@@ -57,4 +58,9 @@ func pathIter(path string) iter.Seq[string] {
 			}
 		}
 	}
+}
+
+func isDate(s string) bool {
+	_, err := time.Parse(time.DateOnly, s)
+	return err == nil
 }
