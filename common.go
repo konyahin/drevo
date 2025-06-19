@@ -50,6 +50,9 @@ func pathIter(path string) iter.Seq[string] {
 	return func(yield func(string) bool) {
 		parts := strings.Split(path, string(filepath.Separator))
 		partPath := ""
+		if strings.HasPrefix(path, "/") {
+			partPath = "/"
+		}
 		for _, part := range parts {
 			partPath = filepath.Join(partPath, part)
 			if !yield(partPath) {
