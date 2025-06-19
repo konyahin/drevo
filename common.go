@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/fs"
 	"iter"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -34,7 +33,7 @@ func taskState(path string) (TaskState, error) {
 }
 
 func fileState(path string) (TaskState, error) {
-	fileInfo, err := os.Stat(path)
+	fileInfo, err := fm.Stat(path)
 	switch {
 	case errors.Is(err, fs.ErrNotExist):
 		return DoesntExist, nil

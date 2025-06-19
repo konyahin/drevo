@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -34,5 +33,5 @@ func complete(arg string) error {
 
 	day := time.Now().Format(time.DateOnly)
 	file = fmt.Sprintf("x %s %s", day, file)
-	return os.Rename(arg, filepath.Join(dir, file))
+	return fm.Rename(arg, filepath.Join(dir, file))
 }

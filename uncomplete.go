@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -37,5 +36,5 @@ func uncomplete(arg string) error {
 	if isDate(parts[0]) {
 		file = parts[1]
 	}
-	return os.Rename(arg, filepath.Join(dir, file))
+	return fm.Rename(arg, filepath.Join(dir, file))
 }
