@@ -9,6 +9,8 @@ type helpFunc func()
 
 var helps []helpFunc
 
+var fm = realFileManager{}
+
 func showHelp() {
 	fmt.Println("deltatree - hierarchical task manager")
 	fmt.Println("Usage:")
@@ -39,8 +41,6 @@ func main() {
 	switch os.Args[1] {
 	case "help":
 		showHelp()
-	case "totree":
-		err = totree(os.Args[2:])
 	case "create":
 		err = create(os.Args[2:])
 	case "find":

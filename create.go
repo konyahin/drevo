@@ -3,9 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
-	"slices"
 	"time"
 )
 
@@ -33,22 +31,22 @@ func create(args []string) error {
 			return err
 		}
 
-		if state != DoesntExist {
-			return errors.New("task already exist: " + arg)
+		if state == NotATask {
+			return errors.New("taks path contain file (not a folder): " + arg)
 		}
 
-		totree(slices.Collect(pathIter(filepath.Dir(arg))))
+		if state == Ok {
+			return errors.New("task already exist: " + arg)
+		}
 
 		dir, file := filepath.Split(arg)
 		day := time.Now().Format(time.DateOnly)
 		file = fmt.Sprintf("%s %s", day, file)
 
-		f, err := os.Create(filepath.Join(dir, file))
+		err = fm.CreateTask(filepath.Join(dir, file))
 		if err != nil {
 			return err
 		}
-
-		_ = f.Close()
 	}
 
 	return nil

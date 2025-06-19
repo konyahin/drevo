@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,13 +22,9 @@ func complete(arg string) error {
 		return nil
 	}
 
-	state, err := taskState(arg)
+	err := shouldBeATask(arg)
 	if err != nil {
 		return err
-	}
-
-	if state == DoesntExist {
-		return errors.New("task doesn't exist: " + arg)
 	}
 
 	dir, file := filepath.Split(arg)

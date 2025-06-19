@@ -14,23 +14,23 @@ type TaskState int
 
 const (
 	DoesntExist = iota
-	Leaf
-	Tree
+	NotATask
+	Ok
 )
 
 func taskState(path string) (TaskState, error) {
-	for part := range pathIter(filepath.Dir(path)) {
+	for part := range pathIter(path) {
 		state, err := fileState(part)
 		if err != nil {
 			return 0, err
 		}
 
-		if state != Tree {
-			return DoesntExist, err
+		if state != Ok {
+			return state, nil
 		}
 	}
 
-	return fileState(path)
+	return Ok, nil
 }
 
 func fileState(path string) (TaskState, error) {
@@ -41,9 +41,9 @@ func fileState(path string) (TaskState, error) {
 	case err != nil:
 		return 0, err
 	case fileInfo.IsDir():
-		return Tree, nil
+		return Ok, nil
 	default:
-		return Leaf, nil
+		return NotATask, nil
 	}
 }
 
@@ -63,4 +63,21 @@ func pathIter(path string) iter.Seq[string] {
 func isDate(s string) bool {
 	_, err := time.Parse(time.DateOnly, s)
 	return err == nil
+}
+
+func shouldBeATask(path string) error {
+	state, err := taskState(path)
+	if err != nil {
+		return err
+	}
+
+	if state == DoesntExist {
+		return errors.New("task doesn't exist: " + path)
+	}
+
+	if state == NotATask {
+		return errors.New("it's not a task, this is a file: " + path)
+	}
+
+	return nil
 }
