@@ -9,7 +9,8 @@ type helpFunc func()
 
 var helps []helpFunc
 
-var fm = realFileManager{}
+var fm FileManager = realFileManager{}
+var dates Dates = realDates{}
 
 func showHelp() {
 	fmt.Println("deltatree - hierarchical task manager")

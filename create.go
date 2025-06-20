@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"time"
 )
 
 func init() {
@@ -40,7 +39,7 @@ func create(args []string) error {
 		}
 
 		dir, file := filepath.Split(arg)
-		day := time.Now().Format(time.DateOnly)
+		day := dates.CurrentDate()
 		file = fmt.Sprintf("%s %s", day, file)
 
 		err = fm.CreateTask(filepath.Join(dir, file))
