@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"konyahin.xyz/deltatree/mock"
+	"strings"
 	"testing"
 )
 
@@ -31,6 +33,28 @@ func TestCreateTask(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	if !ffm.IsDirCreated(fileName) {
+		t.Error("Dir is not created:", fileName)
+	}
+}
+
+func TestCreateTaskFail(t *testing.T) {
+	task := t.Name()
+	fileName := "2025-06-20 " + task
+
+	fsErr := errors.New("creation failed")
+	ffm.DoesntExist(fileName)
+	ffm.CreatedError(fileName, fsErr)
+
+	err := create([]string{task})
+	if err != fsErr {
+		t.Error(err)
+	}
+
+	if !ffm.IsDirCreated(fileName) {
+		t.Error("Dir is not created:", fileName)
+	}
 }
 
 func TestCreateTaskAlreadyExist(t *testing.T) {
@@ -40,7 +64,59 @@ func TestCreateTaskAlreadyExist(t *testing.T) {
 	ffm.DirExist(fileName)
 
 	err := create([]string{task})
-	if err.Error() != "task already exist: TestCreateTaskAlreadyExist" {
+	if err != nil {
 		t.Error(err)
+	}
+}
+
+func TestCreateTaskStatError(t *testing.T) {
+	task := t.Name()
+	fileName := "2025-06-20 " + task
+
+	fsErr := errors.New("some fs error")
+	ffm.StatError(fileName, fsErr)
+
+	err := create([]string{task})
+	if err != fsErr {
+		t.Error("Wrong error. Expect", fsErr, "got", err)
+	}
+}
+
+func TestCreateTaskInFolder(t *testing.T) {
+	folder := "folder" + t.Name()
+	task := folder + "/" + t.Name()
+	fileName := "2025-06-20 " + t.Name()
+	fullPath := folder + "/" + fileName
+
+	ffm.DirExist(folder)
+	ffm.DoesntExist(fullPath)
+	ffm.DirCreated(fullPath)
+
+	err := create([]string{task})
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !ffm.IsDirCreated(fullPath) {
+		t.Error("Dir is not created:", fullPath)
+	}
+}
+
+func TestCreateTaskInFile(t *testing.T) {
+	folder := "folder" + t.Name()
+	task := folder + "/" + t.Name()
+	fileName := "2025-06-20 " + t.Name()
+	fullPath := folder + "/" + fileName
+
+	ffm.FileExist(folder)
+	ffm.DoesntExist(fullPath)
+
+	err := create([]string{task})
+	if !strings.HasPrefix(err.Error(), "taks path contain file (not a folder)") {
+		t.Error(err)
+	}
+
+	if ffm.IsDirCreated(fullPath) {
+		t.Error("Dir is created:", fullPath)
 	}
 }

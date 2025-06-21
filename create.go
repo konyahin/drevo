@@ -28,8 +28,9 @@ func create(args []string) error {
 		dir, file := filepath.Split(arg)
 		day := dates.CurrentDate()
 		file = fmt.Sprintf("%s %s", day, file)
+		fullPath := filepath.Join(dir, file)
 
-		state, err := taskState(file)
+		state, err := taskState(fullPath)
 		if err != nil {
 			return err
 		}
@@ -38,11 +39,12 @@ func create(args []string) error {
 			return errors.New("taks path contain file (not a folder): " + arg)
 		}
 
+		// already exist - do nothing
 		if state == Ok {
-			return errors.New("task already exist: " + arg)
+			return nil
 		}
 
-		err = fm.CreateTask(filepath.Join(dir, file))
+		err = fm.CreateTask(fullPath)
 		if err != nil {
 			return err
 		}
