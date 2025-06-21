@@ -25,7 +25,11 @@ func create(args []string) error {
 			continue
 		}
 
-		state, err := taskState(arg)
+		dir, file := filepath.Split(arg)
+		day := dates.CurrentDate()
+		file = fmt.Sprintf("%s %s", day, file)
+
+		state, err := taskState(file)
 		if err != nil {
 			return err
 		}
@@ -37,10 +41,6 @@ func create(args []string) error {
 		if state == Ok {
 			return errors.New("task already exist: " + arg)
 		}
-
-		dir, file := filepath.Split(arg)
-		day := dates.CurrentDate()
-		file = fmt.Sprintf("%s %s", day, file)
 
 		err = fm.CreateTask(filepath.Join(dir, file))
 		if err != nil {

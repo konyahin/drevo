@@ -26,7 +26,7 @@ func TestCreateTask(t *testing.T) {
 	fileName := "2025-06-20 " + task
 	ffm.CreateMocks[fileName] = nil
 
-	ffm.StatMocks[task] = &mock.Stats{
+	ffm.StatMocks[fileName] = &mock.Stats{
 		Info: mock.FakeFileInfo{Dir: true},
 		Err:  fs.ErrNotExist,
 	}
@@ -42,7 +42,7 @@ func TestCreateTaskAlreadyExist(t *testing.T) {
 	fileName := "2025-06-20 " + task
 	ffm.CreateMocks[fileName] = nil
 
-	ffm.StatMocks[task] = &mock.Stats{
+	ffm.StatMocks[fileName] = &mock.Stats{
 		Info: mock.FakeFileInfo{Dir: true},
 		Err:  nil,
 	}
