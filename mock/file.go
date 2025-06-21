@@ -12,8 +12,8 @@ type Stats struct {
 }
 
 type FakeFileManager struct {
-	CreateMocks map[string]error
-	StatMocks   map[string]*Stats
+	createMocks map[string]error
+	statMocks   map[string]*Stats
 }
 
 func NewFakeFileManager() *FakeFileManager {
@@ -23,8 +23,33 @@ func NewFakeFileManager() *FakeFileManager {
 	}
 }
 
+func (ffm *FakeFileManager) DirExist(path string) {
+	ffm.statMocks[path] = &Stats{
+		Info: FakeFileInfo{Dir: true},
+		Err:  nil,
+	}
+}
+
+func (ffm *FakeFileManager) FileExist(path string) {
+	ffm.statMocks[path] = &Stats{
+		Info: FakeFileInfo{Dir: false},
+		Err:  nil,
+	}
+}
+
+func (ffm *FakeFileManager) DoesntExist(path string) {
+	ffm.statMocks[path] = &Stats{
+		Info: FakeFileInfo{},
+		Err:  fs.ErrNotExist,
+	}
+}
+
+func (ffm *FakeFileManager) DirCreated(path string) {
+	ffm.createMocks[path] = nil
+}
+
 func (ffm FakeFileManager) CreateTask(name string) error {
-	err, ok := ffm.CreateMocks[name]
+	err, ok := ffm.createMocks[name]
 	if !ok {
 		log.Fatal("Missing mock for CreateTask: ", name)
 	}
@@ -39,7 +64,7 @@ func (_ FakeFileManager) RemoveFile(path string) {
 }
 
 func (ffm FakeFileManager) Stat(path string) (os.FileInfo, error) {
-	stats, ok := ffm.StatMocks[path]
+	stats, ok := ffm.statMocks[path]
 	if !ok {
 		log.Fatal("Missing mock for Stat: ", path)
 	}

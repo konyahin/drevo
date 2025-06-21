@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/fs"
 	"konyahin.xyz/deltatree/mock"
 	"testing"
 )
@@ -24,12 +23,9 @@ func TestCreateEmptyArgs(t *testing.T) {
 func TestCreateTask(t *testing.T) {
 	task := t.Name()
 	fileName := "2025-06-20 " + task
-	ffm.CreateMocks[fileName] = nil
 
-	ffm.StatMocks[fileName] = &mock.Stats{
-		Info: mock.FakeFileInfo{Dir: true},
-		Err:  fs.ErrNotExist,
-	}
+	ffm.DoesntExist(fileName)
+	ffm.DirCreated(fileName)
 
 	err := create([]string{task})
 	if err != nil {
@@ -40,12 +36,8 @@ func TestCreateTask(t *testing.T) {
 func TestCreateTaskAlreadyExist(t *testing.T) {
 	task := t.Name()
 	fileName := "2025-06-20 " + task
-	ffm.CreateMocks[fileName] = nil
 
-	ffm.StatMocks[fileName] = &mock.Stats{
-		Info: mock.FakeFileInfo{Dir: true},
-		Err:  nil,
-	}
+	ffm.DirExist(fileName)
 
 	err := create([]string{task})
 	if err.Error() != "task already exist: TestCreateTaskAlreadyExist" {
