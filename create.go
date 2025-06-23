@@ -14,7 +14,7 @@ func createHelp() {
 	fmt.Println("create file ... - create new task(s)")
 }
 
-func create(args []string) error {
+func create(day string, args []string) error {
 	if len(args) < 1 {
 		createHelp()
 		return nil
@@ -26,7 +26,6 @@ func create(args []string) error {
 		}
 
 		dir, file := filepath.Split(arg)
-		day := dates.CurrentDate()
 		file = fmt.Sprintf("%s %s", day, file)
 		fullPath := filepath.Join(dir, file)
 

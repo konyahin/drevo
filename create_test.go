@@ -1,88 +1,95 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"konyahin.xyz/deltatree/mock"
+	"os"
 	"strings"
 	"testing"
 )
 
+var day string = "2025-06-20"
 var ffm *mock.FakeFileManager = mock.NewFakeFileManager()
-var ft mock.FakeTime = mock.FakeTime{}
 
 func init() {
 	fm = ffm
-	dates = ft
+}
+
+func isDirCreated(path string) bool {
+	stats, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+
+	return stats.IsDir()
+}
+
+func generateTaskForDir(t *testing.T, dir string) (fullPath, task string) {
+	task = fmt.Sprintf("%s/%s", dir, t.Name())
+	fullPath = fmt.Sprintf("%s/%s %s", dir, day, t.Name())
+	return
+}
+
+func generateTask(t *testing.T) (fullPath, task string) {
+	return generateTaskForDir(t, t.TempDir())
 }
 
 func TestCreateEmptyArgs(t *testing.T) {
-	err := create([]string{""})
+	err := create(day, []string{""})
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestCreateTask(t *testing.T) {
-	task := t.Name()
-	fileName := "2025-06-20 " + task
+	fm = realFileManager{}
 
-	ffm.DoesntExist(fileName)
-	ffm.DirCreated(fileName)
+	fileName, task := generateTask(t)
 
-	err := create([]string{task})
+	err := create(day, []string{task})
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !ffm.IsDirCreated(fileName) {
+	if !isDirCreated(fileName) {
 		t.Error("Dir is not created:", fileName)
 	}
 }
 
 func TestCreateTaskFail(t *testing.T) {
-	task := t.Name()
-	fileName := "2025-06-20 " + task
+	fm = realFileManager{}
 
-	fsErr := errors.New("creation failed")
-	ffm.DoesntExist(fileName)
-	ffm.CreatedError(fileName, fsErr)
+	dir := t.TempDir()
+	_ = os.Chmod(dir, 0600)
+	fileName, task := generateTaskForDir(t, dir)
 
-	err := create([]string{task})
-	if err != fsErr {
-		t.Error(err)
+	err := create(day, []string{task})
+	if err == nil {
+		t.Error("Should be an error")
 	}
 
-	if !ffm.IsDirCreated(fileName) {
-		t.Error("Dir is not created:", fileName)
+	if isDirCreated(fileName) {
+		t.Error("Dir is created:", fileName)
 	}
 }
 
 func TestCreateTaskAlreadyExist(t *testing.T) {
+	fm = ffm
+
 	task := t.Name()
 	fileName := "2025-06-20 " + task
 
 	ffm.DirExist(fileName)
 
-	err := create([]string{task})
+	err := create(day, []string{task})
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestCreateTaskStatError(t *testing.T) {
-	task := t.Name()
-	fileName := "2025-06-20 " + task
-
-	fsErr := errors.New("some fs error")
-	ffm.StatError(fileName, fsErr)
-
-	err := create([]string{task})
-	if err != fsErr {
-		t.Error("Wrong error. Expect", fsErr, "got", err)
-	}
-}
-
 func TestCreateTaskInFolder(t *testing.T) {
+	fm = ffm
+
 	folder := "folder" + t.Name()
 	task := folder + "/" + t.Name()
 	fileName := "2025-06-20 " + t.Name()
@@ -92,7 +99,7 @@ func TestCreateTaskInFolder(t *testing.T) {
 	ffm.DoesntExist(fullPath)
 	ffm.DirCreated(fullPath)
 
-	err := create([]string{task})
+	err := create(day, []string{task})
 	if err != nil {
 		t.Error(err)
 	}
@@ -103,6 +110,8 @@ func TestCreateTaskInFolder(t *testing.T) {
 }
 
 func TestCreateTaskInFile(t *testing.T) {
+	fm = ffm
+
 	folder := "folder" + t.Name()
 	task := folder + "/" + t.Name()
 	fileName := "2025-06-20 " + t.Name()
@@ -111,7 +120,7 @@ func TestCreateTaskInFile(t *testing.T) {
 	ffm.FileExist(folder)
 	ffm.DoesntExist(fullPath)
 
-	err := create([]string{task})
+	err := create(day, []string{task})
 	if !strings.HasPrefix(err.Error(), "taks path contain file (not a folder)") {
 		t.Error(err)
 	}

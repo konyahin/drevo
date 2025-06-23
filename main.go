@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 type helpFunc func()
@@ -10,7 +11,6 @@ type helpFunc func()
 var helps []helpFunc
 
 var fm FileManager = realFileManager{}
-var dates Dates = realDates{}
 
 func showHelp() {
 	fmt.Println("deltatree - hierarchical task manager")
@@ -38,12 +38,14 @@ func main() {
 		return
 	}
 
+	day := time.Now().Format(time.DateOnly)
+
 	var err error
 	switch os.Args[1] {
 	case "help":
 		showHelp()
 	case "create":
-		err = create(os.Args[2:])
+		err = create(day, os.Args[2:])
 	case "find":
 		var tasks []string
 		tasks, err = find(os.Args[2:])
@@ -55,7 +57,7 @@ func main() {
 		if len(os.Args) > 2 {
 			root = os.Args[2]
 		}
-		err = batch(root)
+		err = batch(day, root)
 	case "complete":
 		var root string
 		if len(os.Args) > 2 {

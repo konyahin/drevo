@@ -16,7 +16,7 @@ func batchHelp() {
 	fmt.Println("batch [root] - create tasks from temp file in root dir, one task per line")
 }
 
-func batch(root string) error {
+func batch(day string, root string) error {
 	tmpfile, err := fm.CreateTempFile()
 	if err != nil {
 		return err
@@ -49,5 +49,5 @@ func batch(root string) error {
 		}
 	}
 
-	return create(tasks)
+	return create(day, tasks)
 }
