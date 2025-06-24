@@ -35,7 +35,7 @@ func create(day string, args []string) error {
 		}
 
 		if state == NotATask {
-			return errors.New("taks path contain file (not a folder): " + arg)
+			return errors.New("taks path contain file (not a folder): " + fullPath)
 		}
 
 		// already exist - do nothing
