@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 )
 
@@ -43,7 +44,7 @@ func create(day string, args []string) error {
 			return nil
 		}
 
-		err = fm.CreateTask(fullPath)
+		err = os.MkdirAll(fullPath, 0755)
 		if err != nil {
 			return err
 		}

@@ -17,11 +17,11 @@ func batchHelp() {
 }
 
 func batch(day string, root string) error {
-	tmpfile, err := fm.CreateTempFile()
+	tmpfile, err := os.CreateTemp("", "deltatask")
 	if err != nil {
 		return err
 	}
-	defer fm.RemoveFile(tmpfile.Name())
+	defer func() { _ = os.Remove(tmpfile.Name()) }()
 
 	editor := os.Getenv("EDITOR")
 	if editor == "" {

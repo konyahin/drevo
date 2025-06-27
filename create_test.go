@@ -2,18 +2,12 @@ package main
 
 import (
 	"fmt"
-	"konyahin.xyz/deltatree/mock"
 	"os"
 	"strings"
 	"testing"
 )
 
 var day string = "2025-06-20"
-var ffm *mock.FakeFileManager = mock.NewFakeFileManager()
-
-func init() {
-	fm = ffm
-}
 
 func isDirCreated(path string) bool {
 	if stats, err := os.Stat(path); err == nil {
@@ -40,8 +34,6 @@ func TestCreateEmptyArgs(t *testing.T) {
 }
 
 func TestCreateTask(t *testing.T) {
-	fm = realFileManager{}
-
 	fileName, task := generateTask(t)
 
 	if err := create(day, []string{task}); err != nil {
@@ -54,8 +46,6 @@ func TestCreateTask(t *testing.T) {
 }
 
 func TestCreateTaskFail(t *testing.T) {
-	fm = realFileManager{}
-
 	dir := t.TempDir()
 	_ = os.Chmod(dir, 0600)
 	fileName, task := generateTaskForDir(t, dir)
@@ -70,8 +60,6 @@ func TestCreateTaskFail(t *testing.T) {
 }
 
 func TestCreateTaskAlreadyExist(t *testing.T) {
-	fm = realFileManager{}
-
 	dir := t.TempDir()
 	fileName, task := generateTaskForDir(t, dir)
 	if err := os.Mkdir(fileName, 750); err != nil {
@@ -84,8 +72,6 @@ func TestCreateTaskAlreadyExist(t *testing.T) {
 }
 
 func TestCreateTaskInFolder(t *testing.T) {
-	fm = realFileManager{}
-
 	dir := t.TempDir() + "/another_folder"
 	fileName, task := generateTaskForDir(t, dir)
 
@@ -99,8 +85,6 @@ func TestCreateTaskInFolder(t *testing.T) {
 }
 
 func TestCreateTaskInFile(t *testing.T) {
-	fm = realFileManager{}
-
 	baseFile := t.TempDir() + "/some_file"
 	file, err := os.Create(baseFile)
 	if err != nil {

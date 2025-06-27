@@ -10,8 +10,6 @@ type helpFunc func()
 
 var helps []helpFunc
 
-var fm FileManager = realFileManager{}
-
 func showHelp() {
 	fmt.Println("deltatree - hierarchical task manager")
 	fmt.Println("Usage:")
