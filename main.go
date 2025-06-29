@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 )
@@ -51,17 +52,17 @@ func main() {
 			printTasks(tasks)
 		}
 	case "batch":
-		var root string
-		if len(os.Args) > 2 {
-			root = os.Args[2]
+		var fileName string
+		fileName, err = editTempFile()
+		if err == nil {
+			err = batch(day, fileName)
 		}
-		err = batch(day, root)
 	case "complete":
 		var root string
 		if len(os.Args) > 2 {
 			root = os.Args[2]
 		}
-		err = complete(root)
+		err = complete(day, root)
 	case "uncomplete":
 		var root string
 		if len(os.Args) > 2 {
@@ -73,6 +74,6 @@ func main() {
 	}
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }

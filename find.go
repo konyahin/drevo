@@ -18,13 +18,16 @@ func findHelp() {
 func find(args []string) ([]string, error) {
 	var tasks []string
 	err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+
+		if err != nil {
+			return err
+		}
+
 		switch {
 		case path == ".":
 			return nil
 		case d.IsDir() && (strings.Contains(path, "/.") || strings.HasPrefix(path, ".")):
 			return fs.SkipDir
-		case !d.IsDir() || strings.Contains(path, "/.") || strings.HasPrefix(path, "."):
-			return nil
 		}
 
 		for _, pattern := range args {

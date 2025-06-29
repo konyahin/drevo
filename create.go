@@ -26,9 +26,12 @@ func create(day string, args []string) error {
 			continue
 		}
 
-		dir, file := filepath.Split(arg)
-		file = fmt.Sprintf("%s %s", day, file)
-		fullPath := filepath.Join(dir, file)
+		fullPath := arg
+		if day != "" {
+			dir, file := filepath.Split(arg)
+			file = fmt.Sprintf("%s %s", day, file)
+			fullPath = filepath.Join(dir, file)
+		}
 
 		state, err := taskState(fullPath)
 		if err != nil {
@@ -41,7 +44,7 @@ func create(day string, args []string) error {
 
 		// already exist - do nothing
 		if state == Ok {
-			return nil
+			continue
 		}
 
 		err = os.MkdirAll(fullPath, 0755)

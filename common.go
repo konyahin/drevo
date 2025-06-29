@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os/exec"
 	"errors"
 	"io/fs"
 	"iter"
@@ -83,4 +84,29 @@ func shouldBeATask(path string) error {
 	}
 
 	return nil
+}
+
+func editTempFile() (string, error) {
+	tmpfile, err := os.CreateTemp("", "deltatask")
+	if err != nil {
+		return "", err
+	}
+	_ = tmpfile.Close()
+
+	fileName := tmpfile.Name()
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "vi"
+	}
+
+	cmd := exec.Command(editor, fileName)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err = cmd.Run(); err != nil {
+		return "", err
+	}
+
+	return fileName, nil
 }

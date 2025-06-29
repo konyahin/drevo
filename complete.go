@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 func init() {
@@ -16,7 +15,7 @@ func completeHelp() {
 	fmt.Println("complete file - mark task as completed")
 }
 
-func complete(arg string) error {
+func complete(day, arg string) error {
 	if arg == "" {
 		completeHelp()
 		return nil
@@ -32,7 +31,6 @@ func complete(arg string) error {
 		return nil
 	}
 
-	day := time.Now().Format(time.DateOnly)
 	file = fmt.Sprintf("x %s %s", day, file)
 	return os.Rename(arg, filepath.Join(dir, file))
 }

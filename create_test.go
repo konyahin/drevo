@@ -9,14 +9,6 @@ import (
 
 var day string = "2025-06-20"
 
-func isDirCreated(path string) bool {
-	if stats, err := os.Stat(path); err == nil {
-		return stats.IsDir()
-	}
-
-	return false
-}
-
 func generateTaskForDir(t *testing.T, dir string) (fullPath, task string) {
 	task = fmt.Sprintf("%s/%s", dir, t.Name())
 	fullPath = fmt.Sprintf("%s/%s %s", dir, day, t.Name())
@@ -29,7 +21,7 @@ func generateTask(t *testing.T) (fullPath, task string) {
 
 func TestCreateEmptyArgs(t *testing.T) {
 	if err := create(day, []string{""}); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -37,11 +29,11 @@ func TestCreateTask(t *testing.T) {
 	fileName, task := generateTask(t)
 
 	if err := create(day, []string{task}); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if !isDirCreated(fileName) {
-		t.Error("Dir is not created:", fileName)
+		t.Fatal("Dir is not created:", fileName)
 	}
 }
 
@@ -51,23 +43,23 @@ func TestCreateTaskFail(t *testing.T) {
 	fileName, task := generateTaskForDir(t, dir)
 
 	if err := create(day, []string{task}); err == nil {
-		t.Error("Should be an error")
+		t.Fatal("Should be an error")
 	}
 
 	if isDirCreated(fileName) {
-		t.Error("Dir is created:", fileName)
+		t.Fatal("The dir is created:", fileName)
 	}
 }
 
 func TestCreateTaskAlreadyExist(t *testing.T) {
 	dir := t.TempDir()
 	fileName, task := generateTaskForDir(t, dir)
-	if err := os.Mkdir(fileName, 750); err != nil {
-		t.Error("Can't create a dir:", err)
+	if err := os.Mkdir(fileName, 0750); err != nil {
+		t.Fatal("Can't create a dir:", err)
 	}
 
 	if err := create(day, []string{task}); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -76,11 +68,11 @@ func TestCreateTaskInFolder(t *testing.T) {
 	fileName, task := generateTaskForDir(t, dir)
 
 	if err := create(day, []string{task}); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if !isDirCreated(fileName) {
-		t.Error("Dir is not created:", fileName)
+		t.Fatal("The dir is not created:", fileName)
 	}
 }
 
@@ -88,7 +80,7 @@ func TestCreateTaskInFile(t *testing.T) {
 	baseFile := t.TempDir() + "/some_file"
 	file, err := os.Create(baseFile)
 	if err != nil {
-		t.Error("Can't create a file:", err)
+		t.Fatal("Can't create a file:", err)
 	}
 	_ = file.Close()
 
@@ -96,10 +88,58 @@ func TestCreateTaskInFile(t *testing.T) {
 
 	err = create(day, []string{task})
 	if !strings.HasPrefix(err.Error(), "taks path contain file (not a folder)") {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if isDirCreated(fileName) {
-		t.Error("Dir is created:", fileName)
+		t.Fatal("The dir is created:", fileName)
 	}
 }
+
+func TestCreateFewTask(t *testing.T) {
+	fileName, task := generateTask(t)
+	fileName2, task2 := generateTask(t)
+
+	if err := create(day, []string{task, task2}); err != nil {
+		t.Fatal(err)
+	}
+
+	if !isDirCreated(fileName) {
+		t.Fatal("Dir is not created:", fileName)
+	}
+
+	if !isDirCreated(fileName2) {
+		t.Fatal("Dir is not created:", fileName2)
+	}
+}
+
+func TestCreateFewTaskAlreadyExist(t *testing.T) {
+	dir := t.TempDir()
+	fileName, task := generateTaskForDir(t, dir)
+	fileName2, task2 := generateTask(t)
+	if err := os.Mkdir(fileName, 0750); err != nil {
+		t.Fatal("Can't create a dir:", err)
+	}
+
+	if err := create(day, []string{task, task2}); err != nil {
+		t.Fatal(err)
+	}
+
+	if !isDirCreated(fileName2) {
+		t.Fatal("Dir is not created:", fileName2)
+	}
+}
+
+func TestCreateTaskWithoutDate(t *testing.T) {
+	dir := t.TempDir()
+	fileName := dir + "/" + t.Name()
+
+	if err := create("", []string{fileName}); err != nil {
+		t.Fatal(err)
+	}
+
+	if !isDirCreated(fileName) {
+		t.Fatal("Dir is not created:", fileName)
+	}
+}
+
