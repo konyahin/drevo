@@ -12,7 +12,7 @@ type helpFunc func()
 var helps []helpFunc
 
 func showHelp() {
-	fmt.Println("deltatree - hierarchical task manager")
+	fmt.Println("drevo - hierarchical task manager")
 	fmt.Println("Usage:")
 	for _, f := range helps {
 		fmt.Print("\t")

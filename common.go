@@ -94,7 +94,7 @@ func shouldBeATask(path string) error {
 }
 
 func editTempFile() (string, error) {
-	tmpfile, err := os.CreateTemp("", "deltatask")
+	tmpfile, err := os.CreateTemp("", "drevo")
 	if err != nil {
 		return "", err
 	}

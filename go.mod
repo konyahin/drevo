@@ -1,3 +1,3 @@
-module konyahin.xyz/deltatree
+module konyahin.xyz/drevo
 
 go 1.24.4
