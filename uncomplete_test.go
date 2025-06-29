@@ -1,8 +1,8 @@
 package main
 
 import (
+	"errors"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -50,7 +50,7 @@ func TestUncompleteTaskWithDate(t *testing.T) {
 	}
 }
 
-func TestUncompleteTaskWithoutTask(t* testing.T) {
+func TestUncompleteTaskWithoutTask(t *testing.T) {
 	dir := t.TempDir()
 	task := dir + "/x test task"
 
@@ -59,7 +59,7 @@ func TestUncompleteTaskWithoutTask(t* testing.T) {
 		t.Fatal("Should be an error")
 	}
 
-	if !strings.HasPrefix(err.Error(), "task doesn't exist") {
+	if !errors.Is(err, ErrTaskDoesntExist) {
 		t.Fatal("Wrong error:", err)
 	}
 }

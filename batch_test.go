@@ -2,8 +2,8 @@ package main
 
 import (
 	"os"
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestBatch(t *testing.T) {
@@ -25,10 +25,10 @@ func TestBatch(t *testing.T) {
 	}
 
 	if !isDirCreated(dir + "/task1") {
-		t.Fatal("The dir should be created:", dir + "/task1")
+		t.Fatal("The dir should be created:", dir+"/task1")
 	}
 
 	if !isDirCreated(dir + "/task2") {
-		t.Fatal("The dir should be created:", dir + "/task2")
+		t.Fatal("The dir should be created:", dir+"/task2")
 	}
 }

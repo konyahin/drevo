@@ -26,4 +26,3 @@ func TestFind(t *testing.T) {
 		t.Fatal("Wrong tasks found:", tasks)
 	}
 }
-

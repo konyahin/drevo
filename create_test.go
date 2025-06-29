@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -87,7 +87,7 @@ func TestCreateTaskInFile(t *testing.T) {
 	fileName, task := generateTaskForDir(t, baseFile)
 
 	err = create(day, []string{task})
-	if !strings.HasPrefix(err.Error(), "taks path contain file (not a folder)") {
+	if !errors.Is(err, ErrFileInPath) {
 		t.Fatal(err)
 	}
 
@@ -142,4 +142,3 @@ func TestCreateTaskWithoutDate(t *testing.T) {
 		t.Fatal("Dir is not created:", fileName)
 	}
 }
-

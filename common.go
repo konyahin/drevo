@@ -1,11 +1,12 @@
 package main
 
 import (
-	"os/exec"
 	"errors"
+	"fmt"
 	"io/fs"
 	"iter"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -17,6 +18,12 @@ const (
 	DoesntExist = iota
 	NotATask
 	Ok
+)
+
+var (
+	ErrTaskDoesntExist error = errors.New("Task doesn't exist")
+	ErrNotATask        error = errors.New("It's not a task, it is a file")
+	ErrFileInPath      error = errors.New("Path contain file, not a folder")
 )
 
 func taskState(path string) (TaskState, error) {
@@ -76,11 +83,11 @@ func shouldBeATask(path string) error {
 	}
 
 	if state == DoesntExist {
-		return errors.New("task doesn't exist: " + path)
+		return fmt.Errorf("%w: %s", ErrTaskDoesntExist, path)
 	}
 
 	if state == NotATask {
-		return errors.New("it's not a task, this is a file: " + path)
+		return fmt.Errorf("%w: %s", ErrNotATask, path)
 	}
 
 	return nil

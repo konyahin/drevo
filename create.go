@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -39,7 +38,7 @@ func create(day string, args []string) error {
 		}
 
 		if state == NotATask {
-			return errors.New("taks path contain file (not a folder): " + fullPath)
+			return fmt.Errorf("%w: %s", ErrFileInPath, fullPath)
 		}
 
 		// already exist - do nothing

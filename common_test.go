@@ -9,4 +9,3 @@ func isDirCreated(path string) bool {
 
 	return false
 }
-

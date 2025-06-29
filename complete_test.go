@@ -1,8 +1,8 @@
 package main
 
 import (
+	"errors"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -50,7 +50,7 @@ func TestCompleteTaskWithDate(t *testing.T) {
 	}
 }
 
-func TestCompleteTaskWithoutTask(t* testing.T) {
+func TestCompleteTaskWithoutTask(t *testing.T) {
 	dir := t.TempDir()
 	task := dir + "/2025-06-27 test task"
 
@@ -59,7 +59,7 @@ func TestCompleteTaskWithoutTask(t* testing.T) {
 		t.Fatal("Should be an error")
 	}
 
-	if !strings.HasPrefix(err.Error(), "task doesn't exist") {
+	if !errors.Is(err, ErrTaskDoesntExist) {
 		t.Fatal("Wrong error:", err)
 	}
 }
@@ -80,4 +80,3 @@ func TestCompleteTaskAlreadyComplete(t *testing.T) {
 		t.Fatal("The dir should stay:", task)
 	}
 }
-
