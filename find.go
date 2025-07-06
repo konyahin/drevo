@@ -12,7 +12,7 @@ func init() {
 }
 
 func findHelp() {
-	fmt.Println("find text ... - finds files matching ALL specified patterns (logical AND)")
+	fmt.Println("find text ... - finds tasks matching ALL specified patterns (logical AND)")
 }
 
 func find(args []string) ([]string, error) {
