@@ -1,8 +1,21 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 )
+
+type wordBuilder struct {
+	strings.Builder
+}
+
+func (buf *wordBuilder) writeWord(word string) {
+	if buf.Len() != 0 {
+		buf.WriteRune(' ')
+	}
+	buf.WriteString(word)
+}
 
 type Task struct {
 	Path       string
@@ -15,15 +28,19 @@ type Task struct {
 	Tags       map[string]string
 }
 
-type wordBuilder struct {
-	strings.Builder
-}
-
 func New(path string) *Task {
 	task := new(Task)
 	task.Path = path
 	task.Tags = make(map[string]string)
 
+	for folder := range strings.SplitSeq(path, "/") {
+		task.enrichFromPath(folder)
+	}
+
+	return task
+}
+
+func (task *Task) enrichFromPath(path string) {
 	words := strings.Split(path, " ")
 
 	if words[0] == "x" {
@@ -64,8 +81,6 @@ func New(path string) *Task {
 		}
 	}
 	task.Text = buf.String()
-
-	return task
 }
 
 func (task Task) String() string {
@@ -88,9 +103,25 @@ func (task Task) String() string {
 	return buf.String()
 }
 
-func (buf *wordBuilder) writeWord(word string) {
-	if buf.Len() != 0 {
-		buf.WriteRune(' ')
+func (task *Task) Complete(day string) error {
+	if task.Done {
+		return nil
 	}
-	buf.WriteString(word)
+
+	task.Done = true
+	task.Completion = day
+	return task.update()
+}
+
+func (task *Task) update() error {
+	oldpath := task.Path
+	parent, _ := filepath.Split(task.Path)
+	name := task.String()
+
+	task.Path = filepath.Join(parent, name)
+	if oldpath == task.Path {
+		return nil
+	}
+
+	return os.Rename(oldpath, task.Path)
 }

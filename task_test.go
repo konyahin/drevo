@@ -171,7 +171,7 @@ func TestNewIncompleteTag(t *testing.T) {
 
 func TestTaskString(t *testing.T) {
 	task := Task{
-		Path:       "",
+		Path:       "doesn't matter",
 		Text:       "new task",
 		Done:       true,
 		Completion: "2025-07-06",

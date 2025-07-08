@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 func init() {
@@ -26,11 +23,6 @@ func complete(day, arg string) error {
 		return err
 	}
 
-	dir, file := filepath.Split(arg)
-	if strings.HasPrefix(file, "x ") {
-		return nil
-	}
-
-	file = fmt.Sprintf("x %s %s", day, file)
-	return os.Rename(arg, filepath.Join(dir, file))
+	task := New(arg)
+	return task.Complete(day)
 }
