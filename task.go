@@ -6,17 +6,6 @@ import (
 	"strings"
 )
 
-type wordBuilder struct {
-	strings.Builder
-}
-
-func (buf *wordBuilder) writeWord(word string) {
-	if buf.Len() != 0 {
-		buf.WriteRune(' ')
-	}
-	buf.WriteString(word)
-}
-
 type Task struct {
 	Path       string
 	Text       string
@@ -38,6 +27,59 @@ func New(path string) *Task {
 	}
 
 	return task
+}
+
+func (task Task) String() string {
+	var buf wordBuilder
+
+	if task.Done {
+		buf.writeWord("x")
+	}
+
+	if task.Done && task.Completion != "" {
+		buf.writeWord(task.Completion)
+	}
+
+	if task.Creation != "" {
+		buf.writeWord(task.Creation)
+	}
+
+	buf.writeWord(task.Text)
+
+	return buf.String()
+}
+
+func (task *Task) Complete(day string) error {
+	if task.Done {
+		return nil
+	}
+
+	task.Done = true
+	task.Completion = day
+	return task.update()
+}
+
+func (task *Task) Uncomplete() error {
+	if !task.Done {
+		return nil
+	}
+
+	task.Done = false
+	task.Completion = ""
+	return task.update()
+}
+
+func (task *Task) update() error {
+	oldpath := task.Path
+	parent, _ := filepath.Split(task.Path)
+	name := task.String()
+
+	task.Path = filepath.Join(parent, name)
+	if oldpath == task.Path {
+		return nil
+	}
+
+	return os.Rename(oldpath, task.Path)
 }
 
 func (task *Task) enrichFromPath(path string) {
@@ -81,47 +123,4 @@ func (task *Task) enrichFromPath(path string) {
 		}
 	}
 	task.Text = buf.String()
-}
-
-func (task Task) String() string {
-	var buf wordBuilder
-
-	if task.Done {
-		buf.writeWord("x")
-	}
-
-	if task.Done && task.Completion != "" {
-		buf.writeWord(task.Completion)
-	}
-
-	if task.Creation != "" {
-		buf.writeWord(task.Creation)
-	}
-
-	buf.writeWord(task.Text)
-
-	return buf.String()
-}
-
-func (task *Task) Complete(day string) error {
-	if task.Done {
-		return nil
-	}
-
-	task.Done = true
-	task.Completion = day
-	return task.update()
-}
-
-func (task *Task) update() error {
-	oldpath := task.Path
-	parent, _ := filepath.Split(task.Path)
-	name := task.String()
-
-	task.Path = filepath.Join(parent, name)
-	if oldpath == task.Path {
-		return nil
-	}
-
-	return os.Rename(oldpath, task.Path)
 }

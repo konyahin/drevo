@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 func init() {
@@ -26,16 +23,6 @@ func uncomplete(arg string) error {
 		return err
 	}
 
-	dir, file := filepath.Split(arg)
-	if !strings.HasPrefix(file, "x ") {
-		return nil
-	}
-
-	file = file[2:]
-	parts := strings.SplitN(file, " ", 2)
-
-	if isDate(parts[0]) {
-		file = parts[1]
-	}
-	return os.Rename(arg, filepath.Join(dir, file))
+	task := New(arg)
+	return task.Uncomplete()
 }
