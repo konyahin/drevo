@@ -30,7 +30,7 @@ func taskState(path string) (TaskState, error) {
 	for part := range pathIter(path) {
 		state, err := fileState(part)
 		if err != nil {
-			return 0, err
+			return -1, err
 		}
 
 		if state != Ok {
@@ -47,7 +47,7 @@ func fileState(path string) (TaskState, error) {
 	case errors.Is(err, fs.ErrNotExist):
 		return DoesntExist, nil
 	case err != nil:
-		return 0, err
+		return -1, err
 	case fileInfo.IsDir():
 		return Ok, nil
 	default:

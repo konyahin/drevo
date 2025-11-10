@@ -28,6 +28,8 @@ func find(args []string) ([]string, error) {
 			return nil
 		case d.IsDir() && (strings.Contains(path, "/.") || strings.HasPrefix(path, ".")):
 			return fs.SkipDir
+		case !d.IsDir():
+			return nil
 		}
 
 		for _, pattern := range args {
