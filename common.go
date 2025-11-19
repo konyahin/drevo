@@ -21,9 +21,9 @@ const (
 )
 
 var (
-	ErrTaskDoesntExist error = errors.New("Task doesn't exist")
-	ErrNotATask        error = errors.New("It's not a task, it is a file")
-	ErrFileInPath      error = errors.New("Path contain file, not a folder")
+	ErrTaskDoesntExist error = errors.New("task doesn't exist")
+	ErrNotATask        error = errors.New("it's not a task, it is a file")
+	ErrFileInPath      error = errors.New("path contain file, not a folder")
 )
 
 func taskState(path string) (TaskState, error) {
