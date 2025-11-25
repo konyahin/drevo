@@ -5,7 +5,17 @@ import (
 )
 
 func init() {
-	helps = append(helps, uncompleteHelp)
+	addCommand(Command{
+		"uncomplete",
+		uncompleteHelp,
+		func(day string, args []string) error {
+			var root string
+			if len(args) > 2 {
+				root = args[2]
+			}
+			return uncomplete(root)
+		},
+	})
 }
 
 func uncompleteHelp() {

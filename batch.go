@@ -7,7 +7,17 @@ import (
 )
 
 func init() {
-	helps = append(helps, batchHelp)
+	addCommand(Command{
+		"batch",
+		batchHelp,
+		func(day string, args []string) error {
+			fileName, err := editTempFile()
+			if err == nil {
+				err = batch(day, fileName)
+			}
+			return err
+		},
+	})
 }
 
 func batchHelp() {

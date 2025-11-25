@@ -8,7 +8,25 @@ import (
 )
 
 func init() {
-	helps = append(helps, findHelp)
+	addCommand((Command{
+		"find",
+		findHelp,
+		func(day string, args []string) error {
+			if len(args) > 2 {
+				args = args[2:]
+			} else {
+				args = nil
+			}
+
+			tasks, err := find(args)
+			if err == nil {
+				for _, task := range tasks {
+					fmt.Println(task)
+				}
+			}
+			return err
+		},
+	}))
 }
 
 func findHelp() {

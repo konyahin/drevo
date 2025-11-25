@@ -5,6 +5,7 @@
 all: check drevo test install
 
 drevo: *.go
+	gofmt -w . 
 	go build
 
 test: drevo

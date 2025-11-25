@@ -7,7 +7,13 @@ import (
 )
 
 func init() {
-	helps = append(helps, createHelp)
+	addCommand(Command{
+		"create",
+		createHelp,
+		func(day string, args []string) error {
+			return create(day, args[2:])
+		},
+	})
 }
 
 func createHelp() {
